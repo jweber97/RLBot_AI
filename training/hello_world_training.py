@@ -45,17 +45,18 @@ class StrikerPatience(StrikerExercise):
     """
 
     car_start_x: float = 0
+    car_start_y: float = 0
 
     def make_game_state(self, rng: SeededRandomNumberGenerator) -> GameState:
         return GameState(
             ball=BallState(physics=Physics(
-                location=Vector3(0, 4400, 1000),
-                velocity=Vector3(0, 0, 200),
+                location=Vector3(0, 0, 0),
+                velocity=Vector3(0, 0, 0),
                 angular_velocity=Vector3(0, 0, 0))),
             cars={
                 0: CarState(
                     physics=Physics(
-                        location=Vector3(self.car_start_x, 3000, 0),
+                        location=Vector3(self.car_start_x, self.car_start_y, 0),
                         rotation=Rotator(0, pi / 2, 0),
                         velocity=Vector3(0, 0, 0),
                         angular_velocity=Vector3(0, 0, 0)),
@@ -121,36 +122,6 @@ class StrikerWall(StrikerExercise):
             },
             boosts={i: BoostState(0) for i in range(34)},
         )
-
-@dataclass
-class StrikerFast(StrikerExercise):
-    """
-    Ball located in at normal starting center. Bot must strike the ball off the wall
-    and make a goal in order to pass. 
-    """
-
-    car_start_x: float = 0
-
-    def make_game_state(self, rng: SeededRandomNumberGenerator) -> GameState:
-        return GameState(
-            ball=BallState(physics=Physics(
-                location=Vector3(0, 4400, 1000),
-                velocity=Vector3(0, 0, 200),
-                angular_velocity=Vector3(0, 0, 0))),
-            cars={
-                0: CarState(
-                    physics=Physics(
-                        location=Vector3(self.car_start_x, 3000, 0),
-                        rotation=Rotator(0, pi / 2, 0),
-                        velocity=Vector3(0, 0, 0),
-                        angular_velocity=Vector3(0, 0, 0)),
-                    jumped=False,
-                    double_jumped=False,
-                    boost_amount=0)
-            },
-            boosts={i: BoostState(0) for i in range(34)},
-        )
-
 
 def make_default_playlist() -> Playlist:
     exercises = [

@@ -58,7 +58,7 @@ class MyBot(BaseAgent):
 
         if 750 < car_velocity.length() < 800:
             # We'll do a front flip if the car is moving at a certain speed.
-            return self.begin_front_flip(packet)
+            return self.begin_jump_flick(packet)
 
         controls = SimpleControllerState()
         controls.steer = steer_toward_target(my_car, target_location)
@@ -67,7 +67,7 @@ class MyBot(BaseAgent):
 
         return controls
 
-    def begin_front_flip(self, packet):
+    def begin_jump_flick(self, packet):
         # Send some quickchat just for fun
         self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
 
@@ -82,3 +82,37 @@ class MyBot(BaseAgent):
 
         # Return the controls associated with the beginning of the sequence so we can start right away.
         return self.active_sequence.tick(packet)
+
+    def begin_front_flip_flick(self, packet, flick_time = 0.05):
+        # Send some quickchat just for fun
+        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
+
+        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
+        # logic during that time because we are setting the active_sequence.
+        self.active_sequence = Sequence([
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=True)),
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=False)),
+            ControlStep(duration=0.02, controls=SimpleControllerState(jump=True, pitch=-1)),
+            ControlStep(duration=flick_time, controls=SimpleControllerState(pitch=1)),
+            ControlStep(duration=0.8, controls=SimpleControllerState()),
+        ])
+
+        # Return the controls associated with the beginning of the sequence so we can start right away.
+        return self.active_sequence.tick(packet)
+
+    def begin_jump_flick(self, packet, hover_dur=0.1):
+        # Send some quickchat just for fun
+        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
+
+        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
+        # logic during that time because we are setting the active_sequence.
+        self.active_sequence = Sequence([
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=True)),
+            ControlStep(duration=hover_dur, controls=SimpleControllerState(jump=False)),
+            ControlStep(duration=0.2, controls=SimpleControllerState(jump=True, pitch=-1)),
+            ControlStep(duration=0.8, controls=SimpleControllerState()),
+        ])
+
+        # Return the controls associated with the beginning of the sequence so we can start right away.
+        return self.active_sequence.tick(packet)
+
