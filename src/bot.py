@@ -56,9 +56,9 @@ class MyBot(BaseAgent):
         self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
         self.renderer.draw_rect_3d(target_location, 8, 8, True, self.renderer.cyan(), centered=True)
 
-        if 750 < car_velocity.length() < 800:
+        if 800 < car_velocity.length() < 900:
             # We'll do a front flip if the car is moving at a certain speed.
-            return self.begin_jump_flick(packet)
+            return self.begin_front_flip_paddle(packet)
 
         controls = SimpleControllerState()
         controls.steer = steer_toward_target(my_car, target_location)
@@ -83,7 +83,7 @@ class MyBot(BaseAgent):
         # Return the controls associated with the beginning of the sequence so we can start right away.
         return self.active_sequence.tick(packet)
 
-    def begin_front_flip_flick(self, packet, flick_time = 0.05):
+    def begin_front_flip_paddle(self, packet, flick_time = 0.05):
         # Send some quickchat just for fun
         self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
 
