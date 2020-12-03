@@ -10,6 +10,8 @@ async-timeout=3.0.1=py37_0
 attrs=20.2.0=py_0
 blas=1.0=mkl
 blinker=1.4=py37_0
+bottle=0.12.19=pypi_0
+bottle-websocket=0.2.9=pypi_0
 boxcars-py=0.1.6=pypi_0
 brotlipy=0.7.0=py37he774522_1000
 ca-certificates=2020.10.14=0
@@ -26,12 +28,17 @@ cryptography=3.1.1=py37h7a1dbc1_0
 cycler=0.10.0=py37_0
 dataclasses=0.6=pypi_0
 docopt=0.6.2=pypi_0
+eel=0.14.0=pypi_0
 freetype=2.10.4=hd328e21_0
 fs=2.4.11=py37hc8dfbb8_2
+future=0.18.2=pypi_0
 gast=0.2.2=py37_0
+gevent=20.9.0=pypi_0
+gevent-websocket=0.10.1=pypi_0
 google-auth=1.23.0=pyhd3eb1b0_0
 google-auth-oauthlib=0.4.2=pyhd3eb1b0_2
 google-pasta=0.2.0=py_0
+greenlet=0.4.17=pypi_0
 grpcio=1.31.0=py37he7da953_0
 h5py=2.10.0=py37h5e291fa_0
 hdf5=1.10.4=h7ebc959_0
@@ -59,7 +66,7 @@ mkl_fft=1.2.0=py37h45dec08_0
 mkl_random=1.1.1=py37h47e9c7a_0
 multidict=4.7.6=py37he774522_1
 numba=0.48.0=pypi_0
-numpy=1.19.3=pypi_0
+numpy=1.18.2=pypi_0
 oauthlib=3.1.0=py_0
 olefile=0.46=py37_0
 openssl=1.1.1h=he774522_0
@@ -85,6 +92,7 @@ pysocks=1.7.1=py37_1
 python=3.7.9=h60c2a47_0
 python-dateutil=2.8.1=py_0
 python_abi=3.7=1_cp37m
+pytictoc=1.5.1=pypi_0
 pytz=2020.1=py_0
 qt=5.9.7=vc14h73c81de_0
 requests=2.24.0=py_0
@@ -118,6 +126,7 @@ webdriver-manager=3.2.2=pypi_0
 websockets=8.1=pypi_0
 werkzeug=0.16.1=py_0
 wheel=0.35.1=py_0
+whichcraft=0.6.1=pypi_0
 win_inet_pton=1.1.0=py37_0
 wincertstore=0.2=py37_0
 wrapt=1.12.1=py37he774522_1
@@ -126,4 +135,6 @@ xz=5.2.5=h62dcd97_0
 yarl=1.6.2=py37he774522_0
 zipp=3.4.0=pyhd3eb1b0_0
 zlib=1.2.11=h62dcd97_4
+zope-event=4.5.0=pypi_0
+zope-interface=5.2.0=pypi_0
 zstd=1.4.5=h04227a9_0
