@@ -8,8 +8,6 @@ from util.drive import steer_toward_target
 from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 
-import json # maybe used for parameter packet
-
 class MyBot(BaseAgent):
 
     def __init__(self, name, team, index):
