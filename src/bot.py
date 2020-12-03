@@ -8,7 +8,7 @@ from util.drive import steer_toward_target
 from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 
-import json # used for parameter packet
+import json # maybe used for parameter packet
 
 class MyBot(BaseAgent):
 
@@ -38,7 +38,10 @@ class MyBot(BaseAgent):
         	- after_boost: after flick boost pct, default=1
         	- 1st_jump_pitch: usually a jump, default=0
         	- 1st_jump_time: usually a jump time, default=0.05
-        	- inter_jump_time: time between executing second jump, default=0.05
+        	- inter1_jump_time: time between executing second jump, default=0.05
+        	- inter1_jump_pitch: pitch between executing second jump, default=0
+        	- inter2_jump_time: time between executing second jump, default=0
+        	- inter2_jump_pitch: pitch between executing second jump, default=0
         	- 2nd_jump_pitch: usually a flip pitch, default=-1
         	- 2nd_jump_time: usually a flip time, default=0.02
         	- post_flick_time: duration after flick, default=0.8
@@ -80,12 +83,14 @@ class MyBot(BaseAgent):
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_front_flip_paddle(packet,flick_time=params['flick_time'], flick_pitch=params['flick_pitch'], 
     											jump1_pitch=params['jump1_pitch'],jump1_time=params['jump1_pitch'],
-    											inter_jump_time=params['inter_jump_time'],
+    											inter1_jump_time=params['inter1_jump_time'],inter1_jump_pitch=params['inter1_jump_pitch'],
+    											inter2_jump_time=params['inter2_jump_time'],inter2_jump_pitch=params['inter2_jump_pitch'],
     											jump2_pitch=params['jump2_pitch'],jump2_time=params['jump2_time'],
     											post_flick_time=params['post_flick_time'],post_flick_pitch=params['post_flick_pitch'])
 
         # TODO: add more parameters for when there is not an action to do
         controls = SimpleControllerState()
+        # TODO: modify target_location +/- angle, arc it, 
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = params['after_throttle']
         controls.boost = params['after_boost']
@@ -94,7 +99,8 @@ class MyBot(BaseAgent):
 
     def begin_double_flip_action(self, packet, flick_time=0.05, flick_pitch=1, 
     											jump1_pitch=-1,jump1_time=0.02,
-    											inter_jump_time=0.02,
+    											inter1_jump_time=0.02,inter1_jump_pitch=0,
+    											inter2_jump_time=0,inter2_jump_pitch=0,
     											jump2_pitch=0,jump2_time=0.05,
     											post_flick_time=0.8,post_flick_pitch=-1):
         # Send some quickchat just for fun
@@ -104,7 +110,8 @@ class MyBot(BaseAgent):
         # logic during that time because we are setting the active_sequence.
         self.active_sequence = Sequence([
             ControlStep(duration=jump1_time, controls=SimpleControllerState(jump=True, pitch=jump1_pitch)),
-            ControlStep(duration=inter_jump_time, controls=SimpleControllerState(jump=False)),
+            ControlStep(duration=inter1_jump_time, controls=SimpleControllerState(jump=False,pitch=inter1_jump_pitch)),
+            ControlStep(duration=inter2_jump_time, controls=SimpleControllerState(jump=False,pitch=inter2_jump_pitch)),
             ControlStep(duration=jump2_time, controls=SimpleControllerState(jump=True, pitch=jump2_pitch)),
             ControlStep(duration=flick_time, controls=SimpleControllerState(pitch=flick_pitch)),
             ControlStep(duration=post_flick_time, controls=SimpleControllerState(pitch=post_flick_pitch)),
