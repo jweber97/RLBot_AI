@@ -1,32 +1,32 @@
-# TODO: create master loop
-# TODO: take input params/output 
-# expect a module 
-# implement for one kickoff test
-
-import json, time 
+import json, time, csv, os
 import numpy as np
+import pandas as pd
 from pytictoc import TicToc
 
 __author__ = 'Jacob Shusko'
 __email__ = 'jws383@cornell.edu'
 
-# TODO: add current time to printing
 # TODO: implement another file that logs training results 
 
-def train_bot(init_params, niters, seed):
+def train_bot(init_params, niters, seed, log):
 	new_params = init_params
 	i=0
 	while(i < niters):
 		t.tic()
-		new_params = training_iteration(params=new_params,iter_number=i)
+		new_params, row = training_iteration(params=new_params,iter_number=i,log=log)
 		t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
 		i += 1
+		log = log.append(row,ignore_index=True)
 
-def training_iteration(params,iter_number,tests=['default_kickoff'],objs=['goal']):
+	return log	
+
+def training_iteration(params,iter_number,log,tests=['default_kickoff'],objs=['goal']):
 	"""
 		training_iteration(params,tests,objs) runs one iteration of training
 	    evaluating all objectives in [objs] on all Rocket League kickoff
 		cases in [tests].
+
+		It returns the new_params to be used as well as the data from the training.
 	"""
 	results = []
 	for i,test in enumerate(tests):
@@ -41,7 +41,13 @@ def training_iteration(params,iter_number,tests=['default_kickoff'],objs=['goal'
 	print(f'{time.strftime("[%H:%M:%S] ")}Results from training iteration {iter_number}: {results}')
 	new_params = params # TODO: call q-learning function to get new params
 	print(f'{time.strftime("[%H:%M:%S] ")}New parameters for q-learning iteration {iter_number+1}: {json.dumps(params,indent=2)}')
-	return new_params
+
+	# update training log 
+	row = {"iteration":iter_number}
+	row.update(params)
+	row.update(results[0])
+
+	return new_params, row
 
 def format_result(result,test,number,objs):
 	"""
@@ -57,8 +63,8 @@ def format_result(result,test,number,objs):
 
 if __name__ == "__main__":
 
-	t = TicToc()
-
+	t = TicToc() # time instance to maintain elapsed times between iterations
+	
 	init_params = {   
 	"lead_distance":1500, "lead_time":2,
 	"minSpeed_action":800,"maxSpeed_action":900,
@@ -71,4 +77,6 @@ if __name__ == "__main__":
     "post_flick_time":0.8,"post_flick_pitch":-1
 	}
 
-	train_bot(init_params=init_params, niters=3, seed=np.random.seed(1))
+	training_log = pd.DataFrame()
+	log = train_bot(init_params=init_params, niters=3, seed=np.random.seed(1), log=training_log)
+	log.to_csv("training_log.csv",mode='a') #TODO: save to correct folder
