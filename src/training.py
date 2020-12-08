@@ -6,8 +6,6 @@ from pytictoc import TicToc
 __author__ = 'Jacob Shusko'
 __email__ = 'jws383@cornell.edu'
 
-# TODO: implement another file that logs training results 
-
 def train_bot(init_params, niters, seed, log):
 	new_params = init_params
 	i=0
@@ -63,7 +61,7 @@ def format_result(result,test,number,objs):
 
 if __name__ == "__main__":
 
-	t = TicToc() # time instance to maintain elapsed times between iterations
+	t = TicToc() # maintain elapsed times between iterations
 	
 	init_params = {   
 	"lead_distance":1500, "lead_time":2,

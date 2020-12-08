@@ -10,22 +10,23 @@ from util.vec import Vec3
 
 class MyBot(BaseAgent):
 
-    def __init__(self, name, team, index):
+    def __init__(self, name, team, index, params:dict):
         super().__init__(name, team, index)
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
+      	self.params = params
 
     def initialize_agent(self):
         # Set up information about the boost pads now that the game is active and the info is available
         self.boost_pad_tracker.initialize_boosts(self.get_field_info())
 
-    def get_output(self, packet: GameTickPacket, params: dict) -> SimpleControllerState:
+    def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
         """
         This function will be called by the framework many times per second. This is where you can
         see the motion of the ball, etc. and return controls to drive your car.
 
-        The [params] dict will be loaded from a json and used to contain all inputs (to be trained).
-        This function expects at least the following keys in [params]:
+        The [self.params] dict used to contain all inputs (to be trained).
+        This function expects at least the following keys in [self.params]:
         	- lead_distance: distance to predict bouncing, default=1500
         	- lead_time: duration to predict bouncing, default=2
         	- minSpeed_action: min velocity action activation, default=800
@@ -63,10 +64,10 @@ class MyBot(BaseAgent):
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
 
-        if car_location.dist(ball_location) > params['lead_distance']:
+        if car_location.dist(ball_location) > self.params['lead_distance']:
             # We're far away from the ball, let's try to lead it a little bit
             ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
-            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + params['lead_time'])
+            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + self.params['lead_time'])
             target_location = Vec3(ball_in_future.physics.location)
             self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
         else:
@@ -77,21 +78,21 @@ class MyBot(BaseAgent):
         self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
         self.renderer.draw_rect_3d(target_location, 8, 8, True, self.renderer.cyan(), centered=True)
 
-        if params['minSpeed_flip'] < car_velocity.length() < params['maxSpeed_flip']:
+        if self.params['minSpeed_flip'] < car_velocity.length() < self.params['maxSpeed_flip']:
             # We'll do a front flip if the car is moving at a certain speed.
-            return self.begin_front_flip_paddle(packet,flick_time=params['flick_time'], flick_pitch=params['flick_pitch'], 
-    											jump1_pitch=params['jump1_pitch'],jump1_time=params['jump1_pitch'],
-    											inter1_jump_time=params['inter1_jump_time'],inter1_jump_pitch=params['inter1_jump_pitch'],
-    											inter2_jump_time=params['inter2_jump_time'],inter2_jump_pitch=params['inter2_jump_pitch'],
-    											jump2_pitch=params['jump2_pitch'],jump2_time=params['jump2_time'],
-    											post_flick_time=params['post_flick_time'],post_flick_pitch=params['post_flick_pitch'])
+            return self.begin_front_flip_paddle(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
+    											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_pitch'],
+    											inter1_jump_time=self.params['inter1_jump_time'],inter1_jump_pitch=self.params['inter1_jump_pitch'],
+    											inter2_jump_time=self.params['inter2_jump_time'],inter2_jump_pitch=self.params['inter2_jump_pitch'],
+    											jump2_pitch=self.params['jump2_pitch'],jump2_time=self.params['jump2_time'],
+    											post_flick_time=self.params['post_flick_time'],post_flick_pitch=self.params['post_flick_pitch'])
 
         # TODO: add more parameters for when there is not an action to do
         controls = SimpleControllerState()
         # TODO: modify target_location +/- angle, arc it, 
         controls.steer = steer_toward_target(my_car, target_location)
-        controls.throttle = params['after_throttle']
-        controls.boost = params['after_boost']
+        controls.throttle = self.params['after_throttle']
+        controls.boost = self.params['after_boost']
 
         return controls
 
