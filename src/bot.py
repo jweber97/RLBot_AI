@@ -8,13 +8,37 @@ from util.drive import steer_toward_target
 from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 
+import json
+
 class MyBot(BaseAgent):
 
-    def __init__(self, name, team, index, params:dict):
+    def __init__(self, name, team, index):
         super().__init__(name, team, index)
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
-      	self.params = params
+
+        self.params = {   "lead_distance":1500, 
+						"lead_time":2,
+	"minSpeed_action":800,
+	"maxSpeed_action":900,
+	"flick_time":0.5,
+    "flick_pitch":1,
+    "after_throttle":1,
+    "after_boost":1,
+    "1st_jump_pitch":0,
+    "1st_jump_time":0.05,
+    "inter1_jump_time":0.05,
+    "inter1_jump_pitch":0,
+    "inter2_jump_time":0,
+    "inter2_jump_pitch":0,
+    "2nd_jump_pitch":-1,
+    "2nd_jump_time":0.02,
+    "post_flick_time":0.8,
+    "post_flick_pitch":-1
+		}
+
+        # with open("\\rlbot_ai\\src\\bot_params.json") as f:
+        # 	self.params = json.load(f)
 
     def initialize_agent(self):
         # Set up information about the boost pads now that the game is active and the info is available

@@ -3,6 +3,11 @@ import numpy as np
 import pandas as pd
 from pytictoc import TicToc
 
+# rocket league stuff
+from rlbot.training.training import Pass, Fail
+from rlbottraining.exercise_runner import run_playlist
+from hello_world_training import StrikerFast, add_my_bot_to_playlist
+
 __author__ = 'Jacob Shusko'
 __email__ = 'jws383@cornell.edu'
 
@@ -31,7 +36,15 @@ def training_iteration(params,iter_number,log,tests=['default_kickoff'],objs=['g
 		print(f'\n{time.strftime("[%H:%M:%S] ")}Running test {i}: {test} with objective(s) {objs}.')
 
 		# TODO: modify bot_params.json ????? or log results
-		# TODO: run rocket league test
+		
+		# run rocket league tests and get results
+		# TODO: use test names to determine
+		playlist = [StrikerFast(name='test a')]
+		result_iter = run_playlist(add_my_bot_to_playlist(playlist))
+		results = list(result_iter)
+		result = results[0]
+       
+		print('\nResults',results)
 		devtest_output = np.random.randint(2) # this will return either 1 or 0 for dev testing reasons
 		test_output = [devtest_output] 
 		results.append(format_result(result=test_output,test=test,number=i,objs=objs))
