@@ -9,6 +9,8 @@ from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 
 import json
+import os
+import sys
 
 class MyBot(BaseAgent):
 
@@ -17,25 +19,29 @@ class MyBot(BaseAgent):
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
 
-        self.params = {   "lead_distance":1500, 
-						"lead_time":2,
-	"minSpeed_action":800,
-	"maxSpeed_action":900,
-	"flick_time":0.5,
-    "flick_pitch":1,
-    "after_throttle":1,
-    "after_boost":1,
-    "1st_jump_pitch":0,
-    "1st_jump_time":0.05,
-    "inter1_jump_time":0.05,
-    "inter1_jump_pitch":0,
-    "inter2_jump_time":0,
-    "inter2_jump_pitch":0,
-    "2nd_jump_pitch":-1,
-    "2nd_jump_time":0.02,
-    "post_flick_time":0.8,
-    "post_flick_pitch":-1
-		}
+        with open(os.path.join(sys.path[0], "bot_params.json"), "r") as f:
+            self.params = json.load(f)
+
+
+ #        self.params = {   "lead_distance":1500, 
+	# 					"lead_time":2,
+	# "minSpeed_action":800,
+	# "maxSpeed_action":900,
+	# "flick_time":0.5,
+ #    "flick_pitch":1,
+ #    "after_throttle":1,
+ #    "after_boost":1,
+ #    "1st_jump_pitch":0,
+ #    "1st_jump_time":0.05,
+ #    "inter1_jump_time":0.05,
+ #    "inter1_jump_pitch":0,
+ #    "inter2_jump_time":0,
+ #    "inter2_jump_pitch":0,
+ #    "2nd_jump_pitch":-1,
+ #    "2nd_jump_time":0.02,
+ #    "post_flick_time":0.8,
+ #    "post_flick_pitch":-1
+	# 	}
 
         # with open("\\rlbot_ai\\src\\bot_params.json") as f:
         # 	self.params = json.load(f)
@@ -102,7 +108,7 @@ class MyBot(BaseAgent):
         self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
         self.renderer.draw_rect_3d(target_location, 8, 8, True, self.renderer.cyan(), centered=True)
 
-        if self.params['minSpeed_flip'] < car_velocity.length() < self.params['maxSpeed_flip']:
+        if self.params['minSpeed_action'] < car_velocity.length() < self.params['maxSpeed_action']:
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_front_flip_paddle(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
     											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_pitch'],
