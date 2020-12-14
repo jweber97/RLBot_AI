@@ -4,13 +4,14 @@ from math import pi
 
 from rlbot.utils.game_state_util import GameState, BoostState, BallState, CarState, Physics, Vector3, Rotator
 from rlbot.matchconfig.match_config import MatchConfig, PlayerConfig, Team
-from rlbottraining.common_exercises.common_base_exercises import StrikerExercise
+# from rlbottraining.common_exercises.common_base_exercises import StrikerExercise
 from rlbottraining.rng import SeededRandomNumberGenerator
 from rlbottraining.match_configs import make_empty_match_config
 from rlbottraining.grading.grader import Grader
 from rlbottraining.training_exercise import TrainingExercise, Playlist
 
 import training_util
+from Striker import StrikerExercise
 from drive_to_ball_grader import DriveToBallGrader
 
 
@@ -43,8 +44,8 @@ class StrikerFast(StrikerExercise):
     Drops the ball close to goal. Looking for fast goal.
     """
 
-    car_start_x: float = 0
-    car_start_y: float = 0
+    car_start_x: float = 100
+    car_start_y: float = 100
     ball_start_x: float = 0
     ball_start_y: float = 0
 

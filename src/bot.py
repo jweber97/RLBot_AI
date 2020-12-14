@@ -1,5 +1,6 @@
 from rlbot.agents.base_agent import BaseAgent, SimpleControllerState
 from rlbot.messages.flat.QuickChatSelection import QuickChatSelection
+from rlbot.matchconfig.match_config import PlayerConfig, Team
 from rlbot.utils.structures.game_data_struct import GameTickPacket
 
 from util.ball_prediction_analysis import find_slice_at_time
@@ -11,6 +12,7 @@ from util.vec import Vec3
 import json
 import os
 import sys
+from pathlib import Path
 
 class MyBot(BaseAgent):
 
@@ -20,35 +22,40 @@ class MyBot(BaseAgent):
         self.boost_pad_tracker = BoostPadTracker()
 
         with open(os.path.join(sys.path[0], "bot_params.json"), "r") as f:
-            self.params = json.load(f)
+        	self.params = json.load(f)
 
-
- #        self.params = {   "lead_distance":1500, 
-	# 					"lead_time":2,
-	# "minSpeed_action":800,
-	# "maxSpeed_action":900,
-	# "flick_time":0.5,
- #    "flick_pitch":1,
- #    "after_throttle":1,
- #    "after_boost":1,
- #    "1st_jump_pitch":0,
- #    "1st_jump_time":0.05,
- #    "inter1_jump_time":0.05,
- #    "inter1_jump_pitch":0,
- #    "inter2_jump_time":0,
- #    "inter2_jump_pitch":0,
- #    "2nd_jump_pitch":-1,
- #    "2nd_jump_time":0.02,
- #    "post_flick_time":0.8,
- #    "post_flick_pitch":-1
-	# 	}
-
-        # with open("\\rlbot_ai\\src\\bot_params.json") as f:
-        # 	self.params = json.load(f)
+    # def update_config():
+    #     print("\n UPDATED CONFIG! \n")
+    #     MyBot.load_config(PlayerConfig.bot_config(
+    #         Path(__file__).absolute().parent.parent / 'src' / 'bot.cfg',
+    #         Team.BLUE).get_header())
 
     def initialize_agent(self):
         # Set up information about the boost pads now that the game is active and the info is available
         self.boost_pad_tracker.initialize_boosts(self.get_field_info())
+
+    def begin_double_flip_action(self, packet, flick_time=0.05, flick_pitch=1, 
+                                            jump1_pitch=-1,jump1_time=0.02,
+                                            inter1_jump_time=0.02,inter1_jump_pitch=0,
+                                            inter2_jump_time=0,inter2_jump_pitch=0,
+                                            jump2_pitch=0,jump2_time=0.05,
+                                            post_flick_time=0.8,post_flick_pitch=-1):
+        # Send some quickchat just for fun
+        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
+
+        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
+        # logic during that time because we are setting the active_sequence.
+        self.active_sequence = Sequence([
+            ControlStep(duration=jump1_time, controls=SimpleControllerState(jump=True, pitch=jump1_pitch)),
+            ControlStep(duration=inter1_jump_time, controls=SimpleControllerState(jump=False,pitch=inter1_jump_pitch)),
+            ControlStep(duration=inter2_jump_time, controls=SimpleControllerState(jump=False,pitch=inter2_jump_pitch)),
+            ControlStep(duration=jump2_time, controls=SimpleControllerState(jump=True, pitch=jump2_pitch)),
+            ControlStep(duration=flick_time, controls=SimpleControllerState(pitch=flick_pitch)),
+            ControlStep(duration=post_flick_time, controls=SimpleControllerState(pitch=post_flick_pitch)),
+        ])
+
+        # Return the controls associated with the beginning of the sequence so we can start right away.
+        return self.active_sequence.tick(packet)
 
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
         """
@@ -77,7 +84,9 @@ class MyBot(BaseAgent):
         	- post_flick_pitch: pitch after flick, default=-1
 
         """
-
+        # self.load_config(PlayerConfig.bot_config(
+        #     Path(__file__).absolute().parent.parent / 'src' / 'bot.cfg',
+        #     Team.BLUE))
         # Keep our boost pad info updated with which pads are currently active
         self.boost_pad_tracker.update_boost_status(packet)
 
@@ -126,25 +135,3 @@ class MyBot(BaseAgent):
 
         return controls
 
-    def begin_double_flip_action(self, packet, flick_time=0.05, flick_pitch=1, 
-    											jump1_pitch=-1,jump1_time=0.02,
-    											inter1_jump_time=0.02,inter1_jump_pitch=0,
-    											inter2_jump_time=0,inter2_jump_pitch=0,
-    											jump2_pitch=0,jump2_time=0.05,
-    											post_flick_time=0.8,post_flick_pitch=-1):
-        # Send some quickchat just for fun
-        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
-
-        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
-        # logic during that time because we are setting the active_sequence.
-        self.active_sequence = Sequence([
-            ControlStep(duration=jump1_time, controls=SimpleControllerState(jump=True, pitch=jump1_pitch)),
-            ControlStep(duration=inter1_jump_time, controls=SimpleControllerState(jump=False,pitch=inter1_jump_pitch)),
-            ControlStep(duration=inter2_jump_time, controls=SimpleControllerState(jump=False,pitch=inter2_jump_pitch)),
-            ControlStep(duration=jump2_time, controls=SimpleControllerState(jump=True, pitch=jump2_pitch)),
-            ControlStep(duration=flick_time, controls=SimpleControllerState(pitch=flick_pitch)),
-            ControlStep(duration=post_flick_time, controls=SimpleControllerState(pitch=post_flick_pitch)),
-        ])
-
-        # Return the controls associated with the beginning of the sequence so we can start right away.
-        return self.active_sequence.tick(packet)
