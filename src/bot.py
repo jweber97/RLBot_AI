@@ -76,12 +76,8 @@ class MyBot(BaseAgent):
         	- 1st_jump_time: usually a jump time, default=0.05
         	- inter1_jump_time: time between executing second jump, default=0.05
         	- inter1_jump_pitch: pitch between executing second jump, default=0
-        	- inter2_jump_time: time between executing second jump, default=0
-        	- inter2_jump_pitch: pitch between executing second jump, default=0
         	- 2nd_jump_pitch: usually a flip pitch, default=-1
         	- 2nd_jump_time: usually a flip time, default=0.02
-        	- post_flick_time: duration after flick, default=0.8
-        	- post_flick_pitch: pitch after flick, default=-1
 
         """
         # self.load_config(PlayerConfig.bot_config(
@@ -121,7 +117,7 @@ class MyBot(BaseAgent):
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_double_flip_action(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
     											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_time'],
-    											inter1_jump_time=self.params['inter1_jump_time'],inter1_jump_pitch=self.params['inter1_jump_pitch'],
+    											# inter1_jump_time=self.params['inter1_jump_time'],inter1_jump_pitch=self.params['inter1_jump_pitch'],
     											# inter2_jump_time=self.params['inter2_jump_time'],inter2_jump_pitch=self.params['inter2_jump_pitch'],
     											jump2_pitch=self.params['jump2_pitch'],jump2_time=self.params['jump2_time'])
     											# post_flick_time=self.params['post_flick_time'],post_flick_pitch=self.params['post_flick_pitch'])
@@ -131,7 +127,7 @@ class MyBot(BaseAgent):
         # TODO: modify target_location +/- angle, arc it, 
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1
-        controls.boost = 0
+        controls.boost = 1
 
         return controls
 
