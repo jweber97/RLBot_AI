@@ -55,7 +55,7 @@ def training_iteration(params,actions,iter_number,log,test='straight_kickoff',ob
 
 	# execute learning step given outcome state
 	end_state = get_end_state(result['grade'])
-	# RL.learn("start", act_num, end_state, 'terminal') 
+	RL.learn("start", act_num, end_state, str(end_state))
 
 	# format result for update to log
 	print('result',result)
@@ -131,8 +131,7 @@ if __name__ == "__main__":
 										)
 
 	
-	num_acts = [i for i in range(0,len(actions))]
-	RL = QLearningTable(num_acts)
+	RL = QLearningTable(list(range(len(actions))))
 	
 
 	log = train_bot(init_params=init_params, actions=actions, niters=25, seed=np.random.seed(1))
