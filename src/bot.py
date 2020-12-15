@@ -103,10 +103,10 @@ class MyBot(BaseAgent):
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
 
-        if car_location.dist(ball_location) > self.params['lead_distance']:
+        if car_location.dist(ball_location) > 1500:
             # We're far away from the ball, let's try to lead it a little bit
             ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
-            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + self.params['lead_time'])
+            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
             target_location = Vec3(ball_in_future.physics.location)
             self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
         else:
@@ -122,16 +122,16 @@ class MyBot(BaseAgent):
             return self.begin_double_flip_action(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
     											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_time'],
     											inter1_jump_time=self.params['inter1_jump_time'],inter1_jump_pitch=self.params['inter1_jump_pitch'],
-    											inter2_jump_time=self.params['inter2_jump_time'],inter2_jump_pitch=self.params['inter2_jump_pitch'],
-    											jump2_pitch=self.params['jump2_pitch'],jump2_time=self.params['jump2_time'],
-    											post_flick_time=self.params['post_flick_time'],post_flick_pitch=self.params['post_flick_pitch'])
+    											# inter2_jump_time=self.params['inter2_jump_time'],inter2_jump_pitch=self.params['inter2_jump_pitch'],
+    											jump2_pitch=self.params['jump2_pitch'],jump2_time=self.params['jump2_time'])
+    											# post_flick_time=self.params['post_flick_time'],post_flick_pitch=self.params['post_flick_pitch'])
 
         # TODO: add more parameters for when there is not an action to do
         controls = SimpleControllerState()
         # TODO: modify target_location +/- angle, arc it, 
         controls.steer = steer_toward_target(my_car, target_location)
-        controls.throttle = self.params['after_throttle']
-        controls.boost = self.params['after_boost']
+        controls.throttle = 1
+        controls.boost = 0
 
         return controls
 

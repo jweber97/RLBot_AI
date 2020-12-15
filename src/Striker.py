@@ -82,11 +82,11 @@ class RecordBallTouches(Grader):
             self.max_duration_seconds = max_duration_seconds
 
         def __repr__(self):
-            return f'{super().__repr__()}: Timeout: Took longer than {self.max_duration_seconds} seconds.'
+            return f'{super().__repr__()}: Timeout'
 
     class NoTouchFail(Fail):
         def __repr__(self):
-            return f'{super().__repr__()}: Bot never touched the ball.'
+            return f'{super().__repr__()}: NoTouch'
 
     def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, NoTouchFail, FailDueToTimeout]]:
         if self.initial_seconds_elapsed is None:
