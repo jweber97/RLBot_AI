@@ -119,8 +119,8 @@ class MyBot(BaseAgent):
 
         if self.params['minSpeed_action'] < car_velocity.length() < self.params['maxSpeed_action']:
             # We'll do a front flip if the car is moving at a certain speed.
-            return self.begin_front_flip_paddle(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
-    											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_pitch'],
+            return self.begin_double_flip_action(packet,flick_time=self.params['flick_time'], flick_pitch=self.params['flick_pitch'], 
+    											jump1_pitch=self.params['jump1_pitch'],jump1_time=self.params['jump1_time'],
     											inter1_jump_time=self.params['inter1_jump_time'],inter1_jump_pitch=self.params['inter1_jump_pitch'],
     											inter2_jump_time=self.params['inter2_jump_time'],inter2_jump_pitch=self.params['inter2_jump_pitch'],
     											jump2_pitch=self.params['jump2_pitch'],jump2_time=self.params['jump2_time'],

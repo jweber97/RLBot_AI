@@ -1,4 +1,4 @@
-import json, time, csv, os
+import json, time, csv, os, sys
 import numpy as np
 import pandas as pd
 from random import randrange
@@ -53,6 +53,8 @@ def training_iteration(params,iter_number,log,tests=['default_kickoff'],objs=['g
 
 	print(f'{time.strftime("[%H:%M:%S] ")}Results from training iteration {iter_number}: {results}')
 	new_params = get_random_params() # TODO: call q-learning function to get new params
+	with open(os.path.join(sys.path[0], "bot_params.json"), "w") as f:
+		json.dump(new_params, f)
 	print(f'{time.strftime("[%H:%M:%S] ")}New parameters for q-learning iteration {iter_number+1}: {json.dumps(params,indent=2)}')
 
 	# update training log 
@@ -76,15 +78,15 @@ def format_result(result,test,number,objs):
 
 def get_random_params():
 	params = {   
-	"lead_distance":randrange(0,1500), "lead_time":randrange(0,2),
+	"lead_distance":randrange(0,1500), "lead_time":randrange(-1,2),
 	"minSpeed_action":randrange(0,800),"maxSpeed_action":randrange(0,900),
-	"flick_time":randrange(0,1),"flick_pitch":randrange(0,1),
-    "after_throttle":randrange(0,1),"after_boost":randrange(0,1),
-    "1st_jump_pitch":randrange(0,1),"1st_jump_time":randrange(0,1),
-    "inter1_jump_time":randrange(0,1),"inter1_jump_pitch":randrange(0,1),
-    "inter2_jump_time":randrange(0,1),"inter2_jump_pitch":randrange(0,1),
-    "2nd_jump_pitch":randrange(-1,1),"2nd_jump_time":randrange(0,1),
-    "post_flick_time":randrange(0,1),"post_flick_pitch":randrange(-1,1)
+	"flick_time":randrange(-1,2),"flick_pitch":randrange(-1,2),
+    "after_throttle":randrange(-1,2),"after_boost":randrange(-1,2),
+    "jump1_pitch":randrange(-1,2),"jump1_time":randrange(-1,2),
+    "inter1_jump_time":randrange(-1,2),"inter1_jump_pitch":randrange(-1,2),
+    "inter2_jump_time":randrange(-1,2),"inter2_jump_pitch":randrange(-1,2),
+    "jump2_pitch":randrange(-2,2),"jump2_time":randrange(-1,2),
+    "post_flick_time":randrange(-1,2),"post_flick_pitch":randrange(-2,2)
 	}
 	return params
 
@@ -97,10 +99,10 @@ if __name__ == "__main__":
 	"minSpeed_action":800,"maxSpeed_action":900,
 	"flick_time":0.5,"flick_pitch":1,
     "after_throttle":1,"after_boost":1,
-    "1st_jump_pitch":0,"1st_jump_time":0.05,
+    "jump1_pitch":0,"jump1_time":0.05,
     "inter1_jump_time":0.05,"inter1_jump_pitch":0,
     "inter2_jump_time":0,"inter2_jump_pitch":0,
-    "2nd_jump_pitch":-1,"2nd_jump_time":0.02,
+    "jump2_pitch":-1,"jump2_time":0.02,
     "post_flick_time":0.8,"post_flick_pitch":-1
 	}
 

@@ -44,8 +44,8 @@ class StrikerFast(StrikerExercise):
     Drops the ball close to goal. Looking for fast goal.
     """
 
-    car_start_x: float = 100
-    car_start_y: float = 100
+    car_start_x: float = 0
+    car_start_y: float = -1000
     ball_start_x: float = 0
     ball_start_y: float = 0
 
@@ -96,11 +96,11 @@ class DrivesToBallExercise(TrainingExercise):
             boosts={i: BoostState(0) for i in range(34)},
         )
 
-def make_default_playlist() -> Playlist:
-    exercises = [
-        StrikerPatience('start perfectly center'),
-        StrikerPatience('start on the right', car_start_x=-1000),
-        DrivesToBallExercise('Get close to ball'),
-        DrivesToBallExercise('Get close-ish to ball', grader=DriveToBallGrader(min_dist_to_pass=1000))
-    ]
-    return add_my_bot_to_playlist(exercises)
+# def make_default_playlist() -> Playlist:
+#     exercises = [
+#         StrikerPatience('start perfectly center'),
+#         StrikerPatience('start on the right', car_start_x=-1000),
+#         # DrivesToBallExercise('Get close to ball'),
+#         # DrivesToBallExercise('Get close-ish to ball', grader=DriveToBallGrader(min_dist_to_pass=1000))
+#     ]
+#     return add_my_bot_to_playlist(exercises)
