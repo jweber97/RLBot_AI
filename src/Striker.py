@@ -69,13 +69,13 @@ class PassOnGoalForAllyTeam(Grader):
         }
 
         # Initialize or re-initialize due to some major change in the tick packet.
-        # if (
-        #     self.init_score is None
-        #     or score.keys() != self.init_score.keys()
-        #     or any(score[t] < self.init_score[t] for t in self.init_score)
-        # ):
-        #     self.init_score = score
-        #     return
+        if (
+            self.init_score is None
+            or score.keys() != self.init_score.keys()
+            or any(score[t] < self.init_score[t] for t in self.init_score)
+        ):
+            self.init_score = score
+            return
 
         scoring_team_id = None
         for team_id in self.init_score:
@@ -97,14 +97,6 @@ class PassOnGoalForAllyTeam(Grader):
 
         self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
         if self.measured_duration_seconds > self.timeout_seconds:
-            scoring_team_id = None
-            for team_id in self.init_score:
-                if self.init_score[team_id] < score[team_id]:  # team score value has increased
-                    assert scoring_team_id is None, "Only one team should score per tick."
-                    scoring_team_id = team_id
-
-            if scoring_team_id is not None:
-                return Pass() if scoring_team_id == self.ally_team else WrongGoalFail()
 
             if latest_touch.time_seconds < self.initial_seconds_elapsed:
                 return self.NoTouchFail()
