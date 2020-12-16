@@ -21,9 +21,9 @@ class StrikerGrader(CompoundGrader):
 
     def __init__(self, timeout_seconds=6.0, ally_team=0):
         super().__init__([
-            PassOnGoalForAllyTeam(ally_team),
+            PassOnGoalForAllyTeam(ally_team, timeout_seconds),
             # FailOnTimeout(timeout_seconds),
-            RecordBallTouches(timeout_seconds)
+            # RecordBallTouches(timeout_seconds)
         ])
 
 
@@ -41,38 +41,7 @@ class PassOnGoalForAllyTeam(Grader):
     otherwise returns a Fail.
     """
 
-    ally_team: int  # The team ID, as in game_datastruct.PlayerInfo.team
-    init_score: Optional[Mapping[int, int]] = None  # team_id -> score
-
-    def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, WrongGoalFail]]:
-        
-        score = {
-            team.team_index: team.score
-            for team in tick.game_tick_packet.teams
-        }
-
-        # Initialize or re-initialize due to some major change in the tick packet.
-        if (
-            self.init_score is None
-            or score.keys() != self.init_score.keys()
-            or any(score[t] < self.init_score[t] for t in self.init_score)
-        ):
-            self.init_score = score
-            return
-
-        scoring_team_id = None
-        for team_id in self.init_score:
-            if self.init_score[team_id] < score[team_id]:  # team score value has increased
-                assert scoring_team_id is None, "Only one team should score per tick."
-                scoring_team_id = team_id
-
-        if scoring_team_id is not None:
-            return Pass() if scoring_team_id == self.ally_team else WrongGoalFail()
-
-
-class RecordBallTouches(Grader):
-
-    def __init__(self, timeout_seconds: float):
+    def __init__(self, ally_team, timeout_seconds: float):
         self.touches: List[Touch] = []
         self.initial_seconds_elapsed: float = None
         self.timeout_seconds = timeout_seconds
@@ -88,7 +57,36 @@ class RecordBallTouches(Grader):
         def __repr__(self):
             return f'{super().__repr__()}: NoTouch'
 
-    def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, NoTouchFail, FailDueToTimeout]]:
+
+    ally_team: int  # The team ID, as in game_datastruct.PlayerInfo.team
+    init_score: Optional[Mapping[int, int]] = None  # team_id -> score
+
+    def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, WrongGoalFail]]:
+        
+        score = {
+            team.team_index: team.score
+            for team in tick.game_tick_packet.teams
+        }
+
+        # Initialize or re-initialize due to some major change in the tick packet.
+        # if (
+        #     self.init_score is None
+        #     or score.keys() != self.init_score.keys()
+        #     or any(score[t] < self.init_score[t] for t in self.init_score)
+        # ):
+        #     self.init_score = score
+        #     return
+
+        scoring_team_id = None
+        for team_id in self.init_score:
+            if self.init_score[team_id] < score[team_id]:  # team score value has increased
+                assert scoring_team_id is None, "Only one team should score per tick."
+                scoring_team_id = team_id
+
+        if scoring_team_id is not None:
+            return Pass() if scoring_team_id == self.ally_team else WrongGoalFail()
+
+
         if self.initial_seconds_elapsed is None:
             self.initial_seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
 
@@ -99,15 +97,51 @@ class RecordBallTouches(Grader):
 
         self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
         if self.measured_duration_seconds > self.timeout_seconds:
+            scoring_team_id = None
+            for team_id in self.init_score:
+                if self.init_score[team_id] < score[team_id]:  # team score value has increased
+                    assert scoring_team_id is None, "Only one team should score per tick."
+                    scoring_team_id = team_id
+
+            if scoring_team_id is not None:
+                return Pass() if scoring_team_id == self.ally_team else WrongGoalFail()
+
             if latest_touch.time_seconds < self.initial_seconds_elapsed:
                 return self.NoTouchFail()
             else:
                 return self.FailDueToTimeout(self.timeout_seconds)
-            return
-        if self.touches and latest_touch.time_seconds == self.touches[-1]:
-            self.touches.append(copy.deepcopy(latest_touch))
-            return Pass()
-        # TODO: maybe impose a limit on the number of touches record
+
+        return
+        #     return
+        # if self.touches and latest_touch.time_seconds == self.touches[-1]:
+        #     self.touches.append(copy.deepcopy(latest_touch))
+        #     return Pass()
+
+
+# class RecordBallTouches(Grader):
+
+
+
+#     def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, NoTouchFail, FailDueToTimeout]]:
+#         if self.initial_seconds_elapsed is None:
+#             self.initial_seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
+
+#         seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
+
+#         # Record the touch only if it is new and happened while we were grading.
+#         latest_touch = tick.game_tick_packet.game_ball.latest_touch
+
+#         self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
+#         if self.measured_duration_seconds > self.timeout_seconds:
+#             if latest_touch.time_seconds < self.initial_seconds_elapsed:
+#                 return self.NoTouchFail()
+#             else:
+#                 return self.FailDueToTimeout(self.timeout_seconds)
+#             return
+#         if self.touches and latest_touch.time_seconds == self.touches[-1]:
+#             self.touches.append(copy.deepcopy(latest_touch))
+#             return Pass()
+#         # TODO: maybe impose a limit on the number of touches record
 
 
 

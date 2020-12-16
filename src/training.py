@@ -14,6 +14,8 @@ from hello_world_training import StrikerFast, add_my_bot_to_playlist
 __author__ = 'Jacob Shusko'
 __email__ = 'jws383@cornell.edu'
 
+COUNT = 0
+
 def train_bot(init_params, actions, niters, seed=1):
 	np.random.seed(seed)
 	new_params = init_params
@@ -40,10 +42,10 @@ def training_iteration(params,actions,iter_number,log,test='straight_kickoff',ob
 	print(f'\n{time.strftime("[%H:%M:%S] ")}Running test {test} with objective {obj}.')
 
 	# running this at the start will ignore the "init_params"
-	# act_num = RL.choose_action("start")
-	# new_params = actions[act_num]
-	act_num = 4
-	new_params = np.random.choice(actions)
+	act_num = RL.choose_action("start")
+	new_params = actions[act_num]
+	# act_num = 4
+	# new_params = np.random.choice(actions)
 	with open(os.path.join(sys.path[0], "bot_params.json"), "w") as f:
 		json.dump(new_params, f)
 	print(f'{time.strftime("[%H:%M:%S] ")}New parameters for q-learning iteration {iter_number}: {json.dumps(new_params,indent=2)}')
@@ -82,11 +84,14 @@ def format_result(time,result,test,number,objs):
 def get_end_state(res):
 	result = str(res)
 	if "Pass" in result:
-		return 2
+		return 5
+		COUNT+=1
 	else:
 		if "Timeout" in result:
-			return 1
+			return -1*3
 		elif "NoTouch" in result:
+			return -1*5
+		else:
 			return 0
 
 
@@ -134,5 +139,7 @@ if __name__ == "__main__":
 	RL = QLearningTable(list(range(len(actions))))
 	
 
-	log = train_bot(init_params=init_params, actions=actions, niters=25, seed=np.random.seed(1))
+	log = train_bot(init_params=init_params, actions=actions, niters=50, seed=np.random.seed(1))
+
+	print("\n\n Made a goal "+ str(COUNT) + " times")
 	# log.to_csv("training_log.csv",mode='a') #TODO: save to correct folder

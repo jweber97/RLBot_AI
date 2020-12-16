@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class QLearningTable:
-    def __init__(self, actions, learning_rate=0.01, reward_decay=0.9, e_greedy=0.9):
+    def __init__(self, actions, learning_rate=0.05, reward_decay=0.9, e_greedy=0.9):
         self.actions = actions  # a list
         self.lr = learning_rate
         self.gamma = reward_decay
@@ -28,7 +28,8 @@ class QLearningTable:
         q_predict = self.q_table.loc[s, a]
         # if s_ != '2:
         # s_ is always terminal
-        q_target = r + self.gamma * self.q_table.loc[s_, :].max()  # next state is not terminal
+
+        q_target = int(r) + self.gamma * self.q_table.loc[s_, :].max()  # next state is not terminal
         # else:
         #     q_target = r  # next state is terminal
         self.q_table.loc[s, a] += self.lr * (q_target - q_predict)  # update
