@@ -14,7 +14,6 @@ from hello_world_training import StrikerFast, add_my_bot_to_playlist
 __author__ = 'Jacob Shusko'
 __email__ = 'jws383@cornell.edu'
 
-COUNT = 0
 
 def train_bot(init_params, actions, niters, seed=1):
 	np.random.seed(seed)
@@ -24,9 +23,9 @@ def train_bot(init_params, actions, niters, seed=1):
 	while(i < niters):
 		t.tic()
 		new_params, row = training_iteration(params=new_params,actions=actions,iter_number=i,log=log)
-		t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
+		# t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
 		i += 1
-		# log = log.append([new_params,row])
+		log = log.append([new_params,row])
 
 	return log	
 
@@ -44,11 +43,12 @@ def training_iteration(params,actions,iter_number,log,test='straight_kickoff',ob
 	# running this at the start will ignore the "init_params"
 	act_num = RL.choose_action("start")
 	new_params = actions[act_num]
+	# new_params = params
 	# act_num = 4
 	# new_params = np.random.choice(actions)
 	with open(os.path.join(sys.path[0], "bot_params.json"), "w") as f:
 		json.dump(new_params, f)
-	print(f'{time.strftime("[%H:%M:%S] ")}New parameters for q-learning iteration {iter_number}: {json.dumps(new_params,indent=2)}')
+	# print(f'{time.strftime("[%H:%M:%S] ")}New parameters for q-learning iteration {iter_number}: {json.dumps(new_params,indent=2)}')
 
 	# run test playlist with up to date "bot_params.json"
 	playlist = [StrikerFast(name=f'{iter_number}: straight_kickoff with {json.dumps(new_params,indent=2)}')]
@@ -64,13 +64,12 @@ def training_iteration(params,actions,iter_number,log,test='straight_kickoff',ob
 	timestmp = result['create_time']
 	#x = format_result(result=end_state,test=test,number=i,obj=obj))
 
-	print(f'{time.strftime("[%H:%M:%S] ")}Result from training iteration {iter_number}: {end_state}')
+	# print(f'{time.strftime("[%H:%M:%S] ")}Result from training iteration {iter_number}: {end_state}')
 
 	# update training log 
 	#row = {"iteration":iter_number}
-	#row.update(params)
-	# row.update(results[0])
-	row = []
+	row = {"iteration":iter_number, "params": params, "result": result['grade']}
+
 
 	return new_params, row
 
@@ -83,9 +82,8 @@ def format_result(time,result,test,number,objs):
 
 def get_end_state(res):
 	result = str(res)
-	if "Pass" in result:
+	if result == "PASS":
 		return 5
-		COUNT+=1
 	else:
 		if "Timeout" in result:
 			return -1*3
@@ -111,6 +109,7 @@ if __name__ == "__main__":
     "jump2_pitch":-1,"jump2_time":0.02,
     # "post_flick_time":0.8,"post_flick_pitch":-1
 	}
+	
 
 	actions = []
 
@@ -139,7 +138,7 @@ if __name__ == "__main__":
 	RL = QLearningTable(list(range(len(actions))))
 	
 
-	log = train_bot(init_params=init_params, actions=actions, niters=50, seed=np.random.seed(1))
+	log = train_bot(init_params=init_params, actions=actions, niters=500, seed=np.random.seed(1))
 
-	print("\n\n Made a goal "+ str(COUNT) + " times")
-	# log.to_csv("training_log.csv",mode='a') #TODO: save to correct folder
+	# print("\n\n Made a goal "+ str(COUNT) + " times")
+	log.to_csv("training_log.csv",mode='a') #TODO: save to correct folder
