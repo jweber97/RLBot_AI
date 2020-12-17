@@ -25,7 +25,8 @@ def train_bot(init_params, actions, niters, seed=1):
 		new_params, row = training_iteration(params=new_params,actions=actions,iter_number=i,log=log)
 		# t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
 		i += 1
-		log = log.append([new_params,row])
+		row.update(new_params)
+		log = log.append(row,ignore_index=True)
 
 	return log	
 
@@ -68,7 +69,7 @@ def training_iteration(params,actions,iter_number,log,test='straight_kickoff',ob
 
 	# update training log 
 	#row = {"iteration":iter_number}
-	row = {"iteration":iter_number, "params": params, "result": result['grade']}
+	row = {"iteration":iter_number, "timestamp":timestmp, "result": result['grade']}
 
 
 	return new_params, row
@@ -138,7 +139,8 @@ if __name__ == "__main__":
 	RL = QLearningTable(list(range(len(actions))))
 	
 
-	log = train_bot(init_params=init_params, actions=actions, niters=500, seed=np.random.seed(1))
+	log = train_bot(init_params=init_params, actions=actions, niters=7500, seed=np.random.seed(1))
 
 	# print("\n\n Made a goal "+ str(COUNT) + " times")
-	log.to_csv("training_log.csv",mode='a') #TODO: save to correct folder
+	current = time.strftime("%Y_%m_%d__%H_%M_%S_")
+	log.to_csv(f"{current}training_log.csv",mode='a') #TODO: save to correct folder
