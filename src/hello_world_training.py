@@ -39,15 +39,16 @@ def add_my_bot_to_playlist(exercises: Playlist) -> Playlist:
 
 
 @dataclass
-class StrikerFast(StrikerExercise):
+class Kickoff(StrikerExercise):
     """
     Drops the ball close to goal. Looking for fast goal.
     """
 
-    car_start_x: float = 0
-    car_start_y: float = -1000
+    car_start_x: float = -256
+    car_start_y: float = -3480
     ball_start_x: float = 0
     ball_start_y: float = 0
+    yaw: float = pi / 2
 
     def make_game_state(self, rng: SeededRandomNumberGenerator) -> GameState:
         return GameState(
@@ -59,7 +60,7 @@ class StrikerFast(StrikerExercise):
                 0: CarState(
                     physics=Physics(
                         location=Vector3(self.car_start_x, self.car_start_y, 0),
-                        rotation=Rotator(0, pi / 2, 0),
+                        rotation=Rotator(0, self.yaw, 0),
                         velocity=Vector3(0, 0, 0),
                         angular_velocity=Vector3(0, 0, 0)),
                     jumped=False,

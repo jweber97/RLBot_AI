@@ -40,9 +40,6 @@ class MyBot(BaseAgent):
                                             inter2_jump_time=0,inter2_jump_pitch=0,
                                             jump2_pitch=0,jump2_time=0.05,
                                             post_flick_time=0.8,post_flick_pitch=-1):
-        # Send some quickchat just for fun
-        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
-
         # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
         # logic during that time because we are setting the active_sequence.
         self.active_sequence = Sequence([
@@ -99,12 +96,13 @@ class MyBot(BaseAgent):
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
 
-        if car_location.dist(ball_location) > 1500:
+        if car_location.dist(ball_location) > self.params['lead_distance']:
             # We're far away from the ball, let's try to lead it a little bit
-            ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
-            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
-            target_location = Vec3(ball_in_future.physics.location)
-            self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
+            # ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
+            # ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
+            # target_location = Vec3(ball_in_future.physics.location)
+            # self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
+            target_location = Vec3(x=0,y=ball_location.y-self.params['lead_distance']) # center self
         else:
             target_location = ball_location
 
