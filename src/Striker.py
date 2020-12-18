@@ -66,6 +66,8 @@ class PassOnGoalForAllyTeam(Grader):
         if self.initial_seconds_elapsed is None:
             self.initial_seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
 
+        seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
+
         score = {
             team.team_index: team.score
             for team in tick.game_tick_packet.teams
@@ -93,12 +95,12 @@ class PassOnGoalForAllyTeam(Grader):
         self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
         if scoring_team_id is not None:
             if self.measured_duration_seconds <= 6:
-                return FastScorePass()
+                return self.FastScorePass()
             elif self.measured_duration_seconds > 6:
                 if self.measured_duration_seconds <= 9:
-                    return MediumScorePass()
+                    return self.MediumScorePass()
                 else:
-                    return SlowScorePass()
+                    return self.SlowScorePass()
 
 
         # if self.touches and latest_touch.time_seconds == self.touches[-1]:

@@ -1,1 +1,1 @@
-{"minSpeed_action": 0, "maxSpeed_action": 450, "flick_time": 0.15, "flick_pitch": 0.33333333333333326, "jump1_pitch": -1.0, "jump1_time": 0.15000000000000002, "jump2_pitch": -1.0, "jump2_time": 0.02}
+{"minSpeed_action": 350, "maxSpeed_action": 800, "flick_time": 0.55, "flick_pitch": -0.33333333333333337, "jump1_pitch": 1.0, "jump1_time": 0.25, "jump2_pitch": -1.0, "jump2_time": 0.12000000000000001}
