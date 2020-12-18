@@ -19,7 +19,7 @@ class StrikerGrader(CompoundGrader):
     A Grader which acts similarly to the RocketLeague striker training.
     """
 
-    def __init__(self, timeout_seconds=6.0, ally_team=0):
+    def __init__(self, timeout_seconds=10.0, ally_team=0):
         super().__init__([
             PassOnGoalForAllyTeam(),
             RecordBallTouches(timeout_seconds),

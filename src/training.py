@@ -84,12 +84,12 @@ def format_result(time,result,test,number,objs):
 def get_end_state(res):
 	result = str(res)
 	if result == "PASS":
-		return 5
+		return 5000
 	else:
 		if "Timeout" in result:
-			return -1*3
+			return -1*300
 		elif "NoTouch" in result:
-			return -1*5
+			return -1*500
 		else:
 			return 0
 
@@ -139,7 +139,7 @@ if __name__ == "__main__":
 	RL = QLearningTable(list(range(len(actions))))
 	
 
-	log = train_bot(init_params=init_params, actions=actions, niters=7500, seed=np.random.seed(1))
+	log = train_bot(init_params=init_params, actions=actions, niters=100, seed=np.random.seed(1))
 
 	# print("\n\n Made a goal "+ str(COUNT) + " times")
 	current = time.strftime("%Y_%m_%d__%H_%M_%S_")
