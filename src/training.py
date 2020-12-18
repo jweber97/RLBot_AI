@@ -80,12 +80,17 @@ def training_iteration(actions,iter_number,log,test=['right_corner','left_corner
 def get_end_state(res):
 	result = str(res)
 	if result == "PASS":
-		return 5000
+		if "Fast" in result:
+			return 10
+		elif "Medium" in result:
+			return 5
+		else:
+			return 3
 	else:
 		if "Timeout" in result:
-			return -1*300
+			return -1*3
 		elif "NoTouch" in result:
-			return -1*500
+			return -1*5
 		else:
 			return 0
 
@@ -123,6 +128,7 @@ if __name__ == "__main__":
 	
 
 	log = train_bot(actions=actions, niters=1000, seed=np.random.seed(1))
+
 
 	# print("\n\n Made a goal "+ str(COUNT) + " times")
 	current = time.strftime("%Y_%m_%d__%H_%M_%S_")

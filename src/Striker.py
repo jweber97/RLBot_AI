@@ -19,7 +19,7 @@ class StrikerGrader(CompoundGrader):
     A Grader which acts similarly to the RocketLeague striker training.
     """
 
-    def __init__(self, timeout_seconds=10.0, ally_team=0):
+    def __init__(self, timeout_seconds=12.0, ally_team=0):
         super().__init__([
             PassOnGoalForAllyTeam(),
             RecordBallTouches(timeout_seconds),
@@ -41,12 +41,33 @@ class PassOnGoalForAllyTeam(Grader):
     otherwise returns a Fail.
     """
 
+    def __init__(self):
+        self.initial_seconds_elapsed: float = None
+
+
+    class SlowScorePass(Pass):
+        def __repr__(self):
+            return f'{super().__repr__()}: Slow'
+
+    class MediumScorePass(Pass):
+        def __repr__(self):
+            return f'{super().__repr__()}: Medium'
+
+    class FastScorePass(Pass):
+        def __repr__(self):
+            return f'{super().__repr__()}: Fast'
+
 
     # ally_team: int  # The team ID, as in game_datastruct.PlayerInfo.team
     init_score: Optional[Mapping[int, int]] = None  # team_id -> score
 
     def on_tick(self, tick: TrainingTickPacket) -> Optional[Union[Pass, WrongGoalFail]]:
-        # print("\nHERE0\n")
+        
+        if self.initial_seconds_elapsed is None:
+            self.initial_seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
+
+        seconds_elapsed = tick.game_tick_packet.game_info.seconds_elapsed
+
         score = {
             team.team_index: team.score
             for team in tick.game_tick_packet.teams
@@ -71,9 +92,15 @@ class PassOnGoalForAllyTeam(Grader):
                 assert scoring_team_id is None, "Only one team should score per tick."
                 scoring_team_id = team_id
 
+        self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
         if scoring_team_id is not None:
-            print("\nHERE5\n")
-            return Pass()
+            if self.measured_duration_seconds <= 6:
+                return self.FastScorePass()
+            elif self.measured_duration_seconds > 6:
+                if self.measured_duration_seconds <= 9:
+                    return self.MediumScorePass()
+                else:
+                    return self.SlowScorePass()
 
 
         # if self.touches and latest_touch.time_seconds == self.touches[-1]:
