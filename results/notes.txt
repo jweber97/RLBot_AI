@@ -1,0 +1,12 @@
+test 1 : 7500 iterations, -5 (no touch),-3, (timeout), +5 (goal), learning_rate=0.5, reward_decay=0.9, e_greedy=0.9, timeout=6; result: 17/7500 passed, 22 hours - timeout too low, starting center
+
+test 2: 100 iterations, -500 (no touch), -300 (timeout), +500 (goal),  learning_rate=0.5, reward_decay=0.9, e_greedy=0.9, timeout=6; result: 0/100 passed, 5 min
+
+test 3: 100 iterations, -500 (no touch), -300 (timeout), +500 (goal),  learning rate = 0.5, reward_decay=0.9, e_greedy=0.9,timeout=10; result: 84/100 passed
+
+test 4: 1000 iterations, -5(no touch), -3 (timeout), +3(slow 0.5*15), +5(med), +10(fast),  learning rate = 0.5, reward_decay=0.9, e_greedy=0.7,timeout=15; result: x/1000 passed
+
+
+variation:
+ - dribbled the ball on hood versus hit directly
+ - packet rate might offer randomness

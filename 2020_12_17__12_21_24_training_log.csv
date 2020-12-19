@@ -1,5 +1,0 @@
-,iteration,timestamp,result,minSpeed_action,maxSpeed_action,flick_time,flick_pitch,jump1_pitch,jump1_time,jump2_pitch,jump2_time
-0,0.0,2020-12-17 17:21:11.511902,FAIL: Timeout,,,,,,,,
-1,,,,350.0,800.0,0.35,0.33333333333333326,1.0,0.05,-1.0,0.02
-0,1.0,2020-12-17 17:21:23.950071,FAIL: Timeout,,,,,,,,
-1,,,,350.0,400.0,0.15,-0.33333333333333337,1.0,0.15000000000000002,-1.0,0.12000000000000001

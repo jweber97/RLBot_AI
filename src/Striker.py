@@ -19,7 +19,7 @@ class StrikerGrader(CompoundGrader):
     A Grader which acts similarly to the RocketLeague striker training.
     """
 
-    def __init__(self, timeout_seconds=12.0, ally_team=0):
+    def __init__(self, timeout_seconds=15.0, ally_team=0):
         super().__init__([
             PassOnGoalForAllyTeam(),
             RecordBallTouches(timeout_seconds),
@@ -94,10 +94,10 @@ class PassOnGoalForAllyTeam(Grader):
 
         self.measured_duration_seconds = seconds_elapsed - self.initial_seconds_elapsed
         if scoring_team_id is not None:
-            if self.measured_duration_seconds <= 6:
+            if self.measured_duration_seconds <= 0.5*15.0:
                 return self.FastScorePass()
-            elif self.measured_duration_seconds > 6:
-                if self.measured_duration_seconds <= 9:
+            elif self.measured_duration_seconds > 0.5*15.0:
+                if self.measured_duration_seconds <= 0.75*15.0:
                     return self.MediumScorePass()
                 else:
                     return self.SlowScorePass()

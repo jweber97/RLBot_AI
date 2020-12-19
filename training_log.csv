@@ -1,4 +1,0 @@
-,1st_jump_pitch,1st_jump_time,2nd_jump_pitch,2nd_jump_time,after_boost,after_throttle,flick_pitch,flick_time,goal,inter1_jump_pitch,inter1_jump_time,inter2_jump_pitch,inter2_jump_time,iteration,lead_distance,lead_time,maxSpeed_action,minSpeed_action,name,post_flick_pitch,post_flick_time,test_number
-0,0.0,0.05,-1.0,0.02,1.0,1.0,1.0,0.5,1.0,0.0,0.05,0.0,0.0,0.0,1500.0,2.0,900.0,800.0,default_kickoff,-1.0,0.8,0.0
-1,0.0,0.05,-1.0,0.02,1.0,1.0,1.0,0.5,1.0,0.0,0.05,0.0,0.0,1.0,1500.0,2.0,900.0,800.0,default_kickoff,-1.0,0.8,0.0
-2,0.0,0.05,-1.0,0.02,1.0,1.0,1.0,0.5,0.0,0.0,0.05,0.0,0.0,2.0,1500.0,2.0,900.0,800.0,default_kickoff,-1.0,0.8,0.0
