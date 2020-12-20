@@ -22,15 +22,22 @@ def train_bot(actions, niters, seed=1):
 	i=0
 	while(i < niters):
 		t.tic()
-		new_params, row = training_iteration(actions=actions,iter_number=i,log=log)
-		# t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
+		playlist = [Kickoff(name=f'{iter_number}: {test[0]}',car_start_x=-2048,car_start_y=-2560,yaw=pi/4), 
+			    Kickoff(name=f'{iter_number}: {test[1]}',car_start_x=2048,car_start_y=-2560,yaw=0.75*pi
+			Kickoff(name=f'{iter_number}: {test[2]}',car_start_x=-256,car_start_y=-3480,yaw=pi/2),
+	            Kickoff(name=f'{iter_number}: {test[3]}',car_start_x=256,car_start_y=-3840,yaw=pi/2),
+	            Kickoff(name=f'{iter_number}: {test[4]}',car_start_x=0,car_start_y=-4608,yaw=pi/2)]
+		for test in playlist:
+			
+			new_params, row = training_iteration(actions=actions,test=test,iter_number=i,log=log)
+			# t.toc(f'{time.strftime("[%H:%M:%S] ")}Iteration {i} completed in')
+			row.update(new_params)
+			log = log.append(row,ignore_index=True)
 		i += 1
-		row.update(new_params)
-		log = log.append(row,ignore_index=True)
 
 	return log	
 
-def training_iteration(actions,iter_number,log,test=['right_corner','left_corner','back_right','back_left','far_back'],obj='goal'):
+def training_iteration(actions,iter_number,log,test,obj='goal'):
 	"""
 		training_iteration(params,tests,objs) runs one iteration of training
 	    evaluating all objectives in [objs] on all Rocket League kickoff
@@ -39,7 +46,7 @@ def training_iteration(actions,iter_number,log,test=['right_corner','left_corner
 		It returns the new_params to be used as well as the data from the training.
 	"""
 
-	print(f'\n{time.strftime("[%H:%M:%S] ")}Running test {test} with objective {obj}.')
+	print(f'\n{time.strftime("[%H:%M:%S] ")}Running test with objective {obj}.')
 
 	# choose action
 	act_num = RL.choose_action("start")
@@ -49,22 +56,13 @@ def training_iteration(actions,iter_number,log,test=['right_corner','left_corner
 		json.dump(new_params, f)
 
 	# run test playlist with up to date "bot_params.json"
-	playlist = [Kickoff(name=f'{iter_number}: {test[0]}',car_start_x=-2048,car_start_y=-2560,yaw=pi/4), 
-	            Kickoff(name=f'{iter_number}: {test[1]}',car_start_x=2048,car_start_y=-2560,yaw=0.75*pi),
-	            Kickoff(name=f'{iter_number}: {test[2]}',car_start_x=-256,car_start_y=-3480,yaw=pi/2),
-	            Kickoff(name=f'{iter_number}: {test[3]}',car_start_x=256,car_start_y=-3840,yaw=pi/2),
-	            Kickoff(name=f'{iter_number}: {test[4]}',car_start_x=0,car_start_y=-4608,yaw=pi/2)]
+	playlist = [test]
 	result_iter = run_playlist(add_my_bot_to_playlist(playlist))
 	results = list(result_iter)
 
 	# execute learning step given outcome state
-	end_state = 0
-	grades = []
-	for result in results:
-		result = result.to_json()
-		grade = result['grade']
-		grades.append(grade)
-		end_state += get_end_state(grade)
+	grade = results[0].to_json()['grade']
+	end_state += get_end_state(grade)
 	RL.learn("start", act_num, end_state, str(end_state))
 
 	# format result for update to log
