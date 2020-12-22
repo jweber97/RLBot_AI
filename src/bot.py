@@ -102,7 +102,12 @@ class MyBot(BaseAgent):
             # ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
             # target_location = Vec3(ball_in_future.physics.location)
             # self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
-            target_location = Vec3(x=0,y=ball_location.y-self.params['lead_distance']) # center self
+            if car_location.x>0:
+                target_location = Vec3(x=self.params['turn_pt'],y=ball_location.y-self.params['lead_distance']) # center self
+            elif car_location.x<0:
+                target_location = Vec3(x=(-1)*self.params['turn_pt'],y=ball_location.y-self.params['lead_distance']) # center self
+            else:
+                target_location = ball_location
         else:
             target_location = ball_location
 

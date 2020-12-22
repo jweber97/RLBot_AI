@@ -1,1 +1,1 @@
-{"lead_distance": 400, "minSpeed_action": 350, "maxSpeed_action": 600, "flick_time": 0.35, "flick_pitch": 0.33333333333333326, "jump1_pitch": -1.0, "jump1_time": 0.05, "jump2_pitch": 0.33333333333333326, "jump2_time": 0.02}
+{"turn_pt": 0, "lead_distance": 1000, "minSpeed_action": 0, "maxSpeed_action": 50, "flick_time": 0.15, "flick_pitch": -1.0, "jump1_pitch": -1.0, "jump1_time": 0.05, "jump2_pitch": -1.0, "jump2_time": 0.02}
